@@ -21,6 +21,7 @@ import logging
 import sys
 import datetime
 import traceback
+import os
 
 
 
@@ -56,29 +57,32 @@ def main(argv):
     a trivial number of clients.
     """
     log.info("Starting server...")
-     
-    try:
-        log.info("Opening CLIENT_LOG_PATH: {0}".format(CLIENT_LOG_PATH))
-        client_log_fh = open(CLIENT_LOG_PATH, "r")
-    except:
-        print "ERROR: Could not open {0}".format(CLIENT_LOG_PATH)
-        return RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH
 
-    log.info("Opened CLIENT_LOG_PATH successfully".format(CLIENT_LOG_PATH))
-
-    try:
-        log.info("Importing json data from CLIENT_LOG_PATH")
-        client_data = json.load(client_log_fh)
-        if isinstance(client_data, dict) == False:
-            client_data = {}
-    except:
-        log.debug(traceback.format_exc())
-        log.info("Improper format of CLIENT_LOG_PATH found.  Starting from scratch.")
+    if os.path.exists(CLIENT_LOG_PATH) == False:
         client_data = {}
+    else:
+        try:
+            log.info("Opening CLIENT_LOG_PATH: {0}".format(CLIENT_LOG_PATH))
+            client_log_fh = open(CLIENT_LOG_PATH, "r")
+        except:
+            print "ERROR: Could not open {0}".format(CLIENT_LOG_PATH)
+            return RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH
 
-    log.debug(client_data)
+        log.info("Opened CLIENT_LOG_PATH successfully".format(CLIENT_LOG_PATH))
 
-    client_log_fh.close()
+        try:
+            log.info("Importing json data from CLIENT_LOG_PATH")
+            client_data = json.load(client_log_fh)
+            if isinstance(client_data, dict) == False:
+                client_data = {}
+        except:
+            log.debug(traceback.format_exc())
+            log.info("Improper format of CLIENT_LOG_PATH found.  Starting from scratch.")
+            client_data = {}
+
+        log.debug(client_data)
+
+        client_log_fh.close()
 
     log.info("Opening UDP socket")
 
@@ -103,7 +107,6 @@ def main(argv):
     # Shut down gracefully
     log.info("Shutting down the server")
     sock.close()
-    client_log_fh.close()
     log.info("Server stopped")
 
     return 0
