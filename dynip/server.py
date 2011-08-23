@@ -46,6 +46,9 @@ log.setLevel(logging.INFO)
 # Return Codes (DO NOT EDIT)
 RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH=2
 
+# Add'l configuration (shouldn't have to be edited)
+DATA_SIZE_MAX=256
+
 
 def main(argv):
     """
@@ -125,7 +128,7 @@ def listen_loop(sock, client_data, log_path):
         log.debug("Received packet from {0} | Data: {1}".format(addr, data))
 
         # Add the data to the client_data dict
-        client_data[data] = [
+        client_data[data[:DATA_SIZE_MAX]] = [
                 addr[0],
                 datetime.datetime.now().isoformat(' ')
                 ]
