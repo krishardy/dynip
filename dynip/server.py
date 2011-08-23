@@ -22,22 +22,24 @@ import sys
 import datetime
 import traceback
 import os
+import argparse
+import ConfigParser
 
 
 
-# UDP_IP
+# DEFAULT_UDP_IP
 #   IP Address that the server will listen on.
 #   "*" means that dynip should self-discover the ip address
-UDP_IP = "*"
+DEFAULT_SERVER_IP = "*"
 
-# UDP_PORT
+# DEFAULT_UDP_PORT
 #   Port number that the server will listen on.
-UDP_PORT = 28630
+DEFAULT_SERVER_PORT = 28630
 
-# CLIENT_LOG_PATH
+# DEFAULT_CLIENT_LOG_PATH
 #   Path (absolute path preferred) to the JSON file that will
 #   serve as the client log.
-CLIENT_LOG_PATH = "dynip.json"
+DEFAULT_CLIENT_LOG_PATH = "dynip.json"
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -46,9 +48,21 @@ log.setLevel(logging.WARNING)
 # Return Codes (DO NOT EDIT)
 RETCODE_OK = 0
 RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH = 2
+RETCODE_CANNOT_READ_CONFIG = 3
 
 # Add'l configuration (shouldn't have to be edited)
 DATA_SIZE_MAX = 256
+
+# Prepare argparser
+argparser = argparse.ArgumentParser(description="")
+argparser.add_argument('-v', '--verbose', help="Enable verbose (INFO-level) logging",
+        action='store_const',
+        default=logging.WARNING, const=logging.INFO)
+argparser.add_argument('--debug', help="Enable debug (DEBUG-level) logging",
+        action='store_const',
+        default=logging.WARNING, const=logging.DEBUG)
+argparser.add_argument('config', help='Configuration ini file',
+        type=str, nargs=1)
 
 
 def main(argv):
@@ -61,30 +75,41 @@ def main(argv):
     a trivial number of clients.
     """
 
-    # Handle command-line params
-    if "-v" in argv:
-        log.setLevel(logging.INFO)
+    # Parse the command line params
+    args = argparser.parse_args()
+    log.setLevel(min(args.verbose, args.debug))
 
-    if "--debug" in argv:
-        log.setLevel(logging.DEBUG)
+    try:
+        config = ConfigParser.ConfigParser(
+                {'Main':
+                    {'server_ip': DEFAULT_SERVER_IP,
+                     'server_port': DEFAULT_SERVER_PORT,
+                     'client_log_path': DEFAULT_CLIENT_LOG_PATH
+                     }
+                })
 
-    if "-h" in argv or "--help" in argv:
-        usage()
-        return RETCODE_OK
+        config.read(args.config)
+        server_ip = config.get('Main', 'server_ip')
+        server_port = config.getint('Main', 'server_port')
+        client_log_path = config.get('Main', 'client_log_path')
+    except:
+        log.fatal("ERROR: Could not read configuration file {0}".format(args.config))
+        return RETCODE_CANNOT_READ_CONFIG
+
 
     log.info("Starting server...")
 
-    if os.path.exists(CLIENT_LOG_PATH) == False:
+    if os.path.exists(client_log_path) == False:
         client_data = {}
     else:
         try:
-            log.info("Opening CLIENT_LOG_PATH: {0}".format(CLIENT_LOG_PATH))
-            client_log_fh = open(CLIENT_LOG_PATH, "r")
+            log.info("Opening CLIENT_LOG_PATH: {0}".format(client_log_path))
+            client_log_fh = open(client_log_path, "r")
         except:
-            print "ERROR: Could not open {0}".format(CLIENT_LOG_PATH)
+            log.fatal("ERROR: Could not open {0}".format(client_log_path))
             return RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH
 
-        log.info("Opened CLIENT_LOG_PATH successfully".format(CLIENT_LOG_PATH))
+        log.info("Opened CLIENT_LOG_PATH successfully".format(client_log_path))
 
         try:
             log.info("Importing json data from CLIENT_LOG_PATH")
@@ -104,20 +129,18 @@ def main(argv):
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    if UDP_IP == "*":
+    if server_ip == "*":
         log.info("Discovering IP address")
-        listen_ip = socket.gethostbyname(
+        server_ip = socket.gethostbyname(
                 socket.gethostname()
                 )
-    else:
-        listen_ip = UDP_IP
 
-    sock.bind((listen_ip, UDP_PORT))
+    sock.bind((server_ip, server_port))
 
-    log.info("Listening on {0}:{1}".format(UDP_IP, UDP_PORT))
+    log.info("Listening on {0}:{1}".format(server_ip, server_port))
 
     # Enter the listen loop
-    if listen_loop(sock, client_data, CLIENT_LOG_PATH) != True:
+    if listen_loop(sock, client_data, client_log_path) != True:
         log.error("The listen_loop did not exit gracefully.")
 
     # Shut down gracefully
@@ -128,43 +151,41 @@ def main(argv):
     return RETCODE_OK
 
 
-def listen_loop(sock, client_data, log_path):
-    while True:
-        # Block while waiting for the next packet
-        try:
+def listen_loop(sock, client_data, client_log_path):
+    """
+    A blocking loop that listens for UDP packets, logs them, and then waits for the next one.
+    Exits when a KeyboardInterrupt is caught.
+    """
+    try:
+        while True:
             log.debug("Waiting for the next packet")
+
+            # Block while waiting for the next packet
             data, addr = sock.recvfrom(1024)
-        except KeyboardInterrupt:
-            # Break out of loop and exit gracefully
-            log.info("Caught KeyboardInterrupt.  Exiting gracefully")
-            break
 
-        log.debug("Received packet from {0} | Data: {1}".format(addr, data))
+            log.debug("Received packet from {0} | Data: {1}".format(addr, data))
 
-        # Add the data to the client_data dict
-        client_data[data[:DATA_SIZE_MAX]] = [
-                addr[0],
-                datetime.datetime.now().isoformat(' ')
-                ]
+            # Add the data to the client_data dict
+            client_data[data[:DATA_SIZE_MAX]] = [
+                    addr[0],
+                    datetime.datetime.now().isoformat(' ')
+                    ]
 
-        # Write out the changes to a clean file
-        log.info("Saving data")
-        client_log_fh = open(CLIENT_LOG_PATH, "w")
-        json.dump(client_data, client_log_fh)
-        client_log_fh.close()
+            # Write out the changes to a clean file
+            log.info("Saving data")
+            client_log_fh = open(client_log_path, "w")
+            json.dump(client_data, client_log_fh)
+            client_log_fh.close()
+
+    except KeyboardInterrupt:
+        # Break out of loop and exit gracefully
+        log.info("Caught KeyboardInterrupt.  Exiting gracefully")
 
     return True
 
 
 def usage():
-    print """server.py ([options])
-Listens for UDP traffic and logs packet data, IP addresses and timestamps to the client log.
-
-Optional:
--h | --help                 Print this usage info
--v                          Enable verbose (INFO-level) logging
---debug                     Enable debug (DEBUG-level) logging
-"""
+    argparser.print_help()
 
 
 if __name__ == "__main__":
