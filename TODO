@@ -1,6 +1,6 @@
 * Control log verbosity from the command-line
 * Provide config file from command line when starting client or server
-* service/init.d server management
+* service/init.d service management
 * RPM and DEB packaging (purely for my experience)
 * Android client
 * Encrypted packet data to prevent snooping
