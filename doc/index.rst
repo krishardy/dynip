@@ -23,7 +23,7 @@ Installation
 
 You can download DynIP from PyPi:
 
-http://pypi.python.org/pypi/DynIP/0.1
+http://pypi.python.org/pypi/DynIP
 
 To install, execute the following: ::
 
