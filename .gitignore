@@ -1,2 +1,6 @@
 *.log
 /dynip.json
+/DynIP.egg-info
+/build
+/dist
+/push_to_pypi.sh
