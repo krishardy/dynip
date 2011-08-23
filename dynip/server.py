@@ -26,6 +26,7 @@ import argparse
 import ConfigParser
 
 
+CONFIG_SECTION = "DynIP:Server"
 
 # DEFAULT_UDP_IP
 #   IP Address that the server will listen on.
@@ -81,7 +82,7 @@ def main(argv):
 
     try:
         config = ConfigParser.ConfigParser(
-                {'Main':
+                {CONFIG_SECTION:
                     {'server_ip': DEFAULT_SERVER_IP,
                      'server_port': DEFAULT_SERVER_PORT,
                      'client_log_path': DEFAULT_CLIENT_LOG_PATH
@@ -89,9 +90,9 @@ def main(argv):
                 })
 
         config.read(args.config)
-        server_ip = config.get('Main', 'server_ip')
-        server_port = config.getint('Main', 'server_port')
-        client_log_path = config.get('Main', 'client_log_path')
+        server_ip = config.get(CONFIG_SECTION, 'server_ip')
+        server_port = config.getint(CONFIG_SECTION, 'server_port')
+        client_log_path = config.get(CONFIG_SECTION, 'client_log_path')
     except:
         log.fatal("ERROR: Could not read configuration file {0}".format(args.config))
         return RETCODE_CANNOT_READ_CONFIG
