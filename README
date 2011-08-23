@@ -14,11 +14,11 @@ The server, when it receives the UDP datagram, opens a JSON file at the path spe
 Installation
 ------------
 
-To configure the server, edit dynip/server.py and modify the UDP_IP, UDP_PORT and CLIENT_LOG_PATH.  Descriptions of each are in the code.
+To configure the server, copy or edit example.conf and set the server_ip, server_port and client_log_path parameters.  Descriptions of each are in example.conf.
 
 Then start the server by typing: ::
 
-    $ python dynip/server.py
+    $ python dynip/server.py your_config_file.conf
 
 To launch the client and have it fire off a UDP packet, edit dynip/client.py and modify the SERVER_HOSTNAME and SERVER_PORT lines.  Descriptions of each are in the code.
 

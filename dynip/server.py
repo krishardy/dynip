@@ -26,6 +26,10 @@ import argparse
 import ConfigParser
 
 
+logging.basicConfig()
+log = logging.getLogger(__name__)
+log.setLevel(logging.WARNING)
+
 CONFIG_SECTION = "DynIP:Server"
 
 # DEFAULT_UDP_IP
@@ -41,10 +45,6 @@ DEFAULT_SERVER_PORT = 28630
 #   Path (absolute path preferred) to the JSON file that will
 #   serve as the client log.
 DEFAULT_CLIENT_LOG_PATH = "dynip.json"
-
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.WARNING)
 
 # Return Codes (DO NOT EDIT)
 RETCODE_OK = 0
