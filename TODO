@@ -1,0 +1,11 @@
+* Cheeseshop package for easy installation on clients and servers
+* Control log verbosity from the command-line
+* Provide config file from command line when starting client or server
+* service/init.d server management
+* RPM and DEB packaging (purely for my experience)
+* Android client
+* Encrypted packet data to prevent snooping
+* Flood prevention - Packet receipt throttling
+* Flood prevention - Only accept packets from white-listed clients?
+* Flood prevention - Database back-end or smarter file parsing (purely to control memory consumption in the case of LOTS of clients)
+* Flood prevention - Keying or Signing of packets
