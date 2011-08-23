@@ -41,7 +41,7 @@ CLIENT_LOG_PATH="dynip.json"
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.WARNING)
+log.setLevel(logging.INFO)
 
 # Return Codes (DO NOT EDIT)
 RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH=2

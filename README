@@ -11,6 +11,23 @@ The client is typically configured to run on a schedule basis using crontab or W
 
 The server, when it receives the UDP datagram, opens a JSON file at the path specified in the ``CLIENT_LOG_PATH``.  The server looks to see if the client name (the data portion of the packet) is already in the list of known addresses.  If it is, it updates the record with the new IP address from the packet header and the current date and time.  If it is new, it adds it to the dict of known hosts.
 
+Installation
+------------
+
+To configure the server, edit dynip/server.py and modify the UDP_IP, UDP_PORT and CLIENT_LOG_PATH.  Descriptions of each are in the code.
+
+Then start the server by typing: ::
+
+    $ python dynip/server.py
+
+To launch the client and have it fire off a UDP packet, edit dynip/client.py and modify the SERVER_HOSTNAME and SERVER_PORT lines.  Descriptions of each are in the code.
+
+Then launch the client by typing: ::
+
+    $ python dynip/client.py
+
+The server will then save the hostname, ip address and date/time in the CLIENT_LOG_PATH file (dynip.json in the default configuration).
+
 
 Why I Built It
 --------------

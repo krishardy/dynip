@@ -2,4 +2,4 @@
 LOG=dynip.log
 PYTHON=python
 
-$PYTHON dynip/server/dynip.py >$LOG 2>&1 &
+$PYTHON dynip/server.py >$LOG 2>&1 &
