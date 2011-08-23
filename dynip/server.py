@@ -32,22 +32,22 @@ UDP_IP = "*"
 
 # UDP_PORT
 #   Port number that the server will listen on.
-UDP_PORT=28630
+UDP_PORT = 28630
 
 # CLIENT_LOG_PATH
 #   Path (absolute path preferred) to the JSON file that will
 #   serve as the client log.
-CLIENT_LOG_PATH="dynip.json"
+CLIENT_LOG_PATH = "dynip.json"
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 # Return Codes (DO NOT EDIT)
-RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH=2
+RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH = 2
 
 # Add'l configuration (shouldn't have to be edited)
-DATA_SIZE_MAX=256
+DATA_SIZE_MAX = 256
 
 
 def main(argv):
