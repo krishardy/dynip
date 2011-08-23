@@ -1,0 +1,25 @@
+About DynIP
+===========
+
+DynIP is an embarrasingly-simple client and server purely for getting systematic updates of a client's IP address.
+
+
+How it works
+------------
+
+The client is typically configured to run on a schedule basis using crontab or Windows Scheduled Tasks.  When launched, the client sends a UDP datagram to the server, with it's hostname in the data packet.
+
+The server, when it receives the UDP datagram, opens a JSON file at the path specified in the ``CLIENT_LOG_PATH``.  The server looks to see if the client name (the data portion of the packet) is already in the list of known addresses.  If it is, it updates the record with the new IP address from the packet header and the current date and time.  If it is new, it adds it to the dict of known hosts.
+
+
+Why I Built It
+--------------
+
+I am about to go on an extended trip away from home, yet need to know the dynamic IP address that is assigned to my home cable router so that I can easily help my family remotely in case they need help with their computers.  In order to do this, I need to know the IP address that my cable provider as assigned to my cable modem.
+
+By installing the client on each of my computers at home and triggering the client to run every 5 minutes, the server will always keep a log of the most recent public IP address of the boundary device.
+
+License
+=======
+
+See LICENSE.
