@@ -1,4 +1,3 @@
-* Cheeseshop package for easy installation on clients and servers
 * Control log verbosity from the command-line
 * Provide config file from command line when starting client or server
 * service/init.d server management
