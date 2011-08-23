@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
 DynIP Client
 
@@ -32,11 +33,25 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.WARNING)
 
+# Return Codes
+RETCODE_OK = 0
 
 def main(argv):
     """
     Send a single UDP datagram to the server
     """
+
+    # Handle command-line params
+    if "-v" in argv:
+        log.setLevel(logging.INFO)
+
+    if "--debug" in argv:
+        log.setLevel(logging.DEBUG)
+
+    if "-h" in argv or "--help" in argv:
+        usage()
+        return RETCODE_OK
+
     log.debug("Looking up hostname")
     server_ip = socket.gethostbyname(SERVER_HOSTNAME)
 
@@ -52,7 +67,18 @@ def main(argv):
     log.debug("Sending UDP datagram")
     sock.sendto(message, (server_ip, SERVER_PORT))
 
-    return 0
+    return RETCODE_OK
+
+
+def usage():
+    print """client.py ([options])
+Sends a single UDP packet to the DynIP server.
+
+Optional:
+-h | --help                 Print this usage info
+-v                          Enable verbose (INFO-level) logging
+--debug                     Enable debug (DEBUG-level) logging
+"""
 
 
 if __name__ == "__main__":

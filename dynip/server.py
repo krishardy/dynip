@@ -41,9 +41,10 @@ CLIENT_LOG_PATH = "dynip.json"
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(logging.WARNING)
 
 # Return Codes (DO NOT EDIT)
+RETCODE_OK = 0
 RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH = 2
 
 # Add'l configuration (shouldn't have to be edited)
@@ -59,6 +60,18 @@ def main(argv):
     this is not suitable for any significant load or anything but
     a trivial number of clients.
     """
+
+    # Handle command-line params
+    if "-v" in argv:
+        log.setLevel(logging.INFO)
+
+    if "--debug" in argv:
+        log.setLevel(logging.DEBUG)
+
+    if "-h" in argv or "--help" in argv:
+        usage()
+        return RETCODE_OK
+
     log.info("Starting server...")
 
     if os.path.exists(CLIENT_LOG_PATH) == False:
@@ -112,7 +125,7 @@ def main(argv):
     sock.close()
     log.info("Server stopped")
 
-    return 0
+    return RETCODE_OK
 
 
 def listen_loop(sock, client_data, log_path):
@@ -123,6 +136,7 @@ def listen_loop(sock, client_data, log_path):
             data, addr = sock.recvfrom(1024)
         except KeyboardInterrupt:
             # Break out of loop and exit gracefully
+            log.info("Caught KeyboardInterrupt.  Exiting gracefully")
             break
 
         log.debug("Received packet from {0} | Data: {1}".format(addr, data))
@@ -141,6 +155,16 @@ def listen_loop(sock, client_data, log_path):
 
     return True
 
+
+def usage():
+    print """server.py ([options])
+Listens for UDP traffic and logs packet data, IP addresses and timestamps to the client log.
+
+Optional:
+-h | --help                 Print this usage info
+-v                          Enable verbose (INFO-level) logging
+--debug                     Enable debug (DEBUG-level) logging
+"""
 
 
 if __name__ == "__main__":
