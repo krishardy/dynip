@@ -3,19 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to DynIP's documentation!
-=================================
-
-Contents:
-
-.. toctree::
-   :maxdepth: 2
-
+DynIP documentation
+===================
 
 About DynIP
 ===========
 
-For an overview of DynIP, please read the README file.  I will eventaully move the info to this file, but I obviously haven't done it yet.
+DynIP is an embarrasingly-simple client and server purely for getting systematic updates of a client's IP address.
+
+How it works
+------------
+
+The client is typically configured to run on a schedule basis using crontab or Windows Scheduled Tasks.  When launched, the client sends a UDP datagram to the server, with it's hostname in the data packet.
+
+The server, when it receives the UDP datagram, opens a JSON file at the path specified in the ``client_log_path`` of the dynip configuration file.  The server looks to see if the client name (the data portion of the packet) is already in the list of known addresses.  If it is, it updates the record with the new IP address from the packet header and the current date and time.  If it is new, it adds it to the dict of known hosts.
 
 
 Installation
@@ -33,19 +34,19 @@ To install, execute the following: ::
 Usage
 =====
 
-To configure the server, edit dynip/server.py and modify the UDP_IP, UDP_PORT and CLIENT_LOG_PATH.  Descriptions of each are in the code.
+To configure the server, copy or edit example.conf and set the ``server_ip``, ``server_port`` and ``client_log_path`` parameters in the ``DynIP:Server`` section.  Descriptions of each are in example.conf.
 
 Then start the server by typing: ::
 
-    $ python dynip/server.py
+    $ python dynip/server.py your_config_file.conf
 
-To launch the client and have it fire off a UDP packet, edit dynip/client.py and modify the SERVER_HOSTNAME and SERVER_PORT lines.  Descriptions of each are in the code.
+To launch the client and have it fire off a UDP packet, edit your configuration file (example.conf or whatever you copied it to), and modify the ``server_hostname`` and ``server_port`` lines in the ``DynIP:Client`` section.  Descriptions of each are in the code.
 
 Then launch the client by typing: ::
 
-    $ python dynip/client.py
+    $ python dynip/client.py your_config_file.conf
 
-The server will then save the hostname, ip address and date/time in the CLIENT_LOG_PATH file (dynip.json in the default configuration).
+The client will fire a single UDP packet to the server.  The server will then save the hostname, ip address and date/time in the file specified in ``client_log_path`` in the .conf file.
 
 
 Options
@@ -53,18 +54,31 @@ Options
 
 To enable verbose (INFO-level) logging, add `-v` to the command line when launching the server or client. ::
 
-    $ python dynip/server.py -v
-    $ python dynip/client.py -v
+    $ python dynip/server.py -v my_config.conf
+    $ python dynip/client.py -v my_config.conf
 
 
 To enable debug (DEBUG-level) logging, add `--debug` to the command line when launching the server or client. ::
 
-    $ python dynip/server.py --debug
-    $ python dynip/client.py --debug
+    $ python dynip/server.py --debug my_config.conf
+    $ python dynip/client.py --debug my_config.conf
 
 
 Both the server and client return usage information if you add `--help` or `-h` to the command line when invoking the client or server.
 
+
+Why I Built It
+==============
+
+I am about to go on an extended trip away from home, yet need to know the dynamic IP address that is assigned to my home cable router so that I can easily help my family remotely in case they need help with their computers.  In order to do this, I need to know the IP address that my cable provider as assigned to my cable modem.
+
+By installing the client on each of my computers at home and triggering the client to run every 5 minutes, the server will always keep a log of the most recent public IP address of the boundary device.
+
+
+License
+=======
+
+DynIP is licensed under a BSD License.  See the LICENSE file.
 
 
 Get The Source
@@ -75,6 +89,29 @@ The git repository is available at:
 http://github.com/krishardy/dynip
 
 
+Modules
+=======
+
+dynip
+-----
+
+.. automodule:: dynip
+    :members:
+    :show-inheritance:
+
+dynip.server
+^^^^^^^^^^^^
+
+.. automodule:: dynip.server
+    :members:
+    :show-inheritance:
+
+dynip.client
+^^^^^^^^^^^^
+
+.. automodule:: dynip.client
+    :members:
+    :show-inheritance:
 
 Indices and tables
 ==================

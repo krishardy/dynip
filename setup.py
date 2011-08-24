@@ -10,7 +10,7 @@ def read(fname):
 
 setup(
     name = "DynIP",
-    version = "0.1a",
+    version = "0.1b",
     author = "Kris Hardy",
     author_email = "kris@rkrishardy.com",
     description = ("A painfully simple UDP Client/Server for tracking the IP addresses of your devices."),

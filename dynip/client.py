@@ -3,7 +3,8 @@
 DynIP Client
 
 A embarrisingly-simple client with sends UDP packets to the DynIP server.
-
+"""
+"""
 Copyright (c) 2011, R. Kristoffer Hardy
 All rights reserved.
 
@@ -59,6 +60,8 @@ argparser.add_argument('config', help="Configuration .conf file",
 def main(argv):
     """
     Send a single UDP datagram to the server
+
+    :argv: List of command line arguments from sys.argv
     """
 
     # Parse the command-line arguments
@@ -96,8 +99,9 @@ def main(argv):
 def send_packet(destination_ip, destination_port):
     """
     Send a single UDP packet to the target server.
-    destination_ip: Integer
-    destination_port: Integer
+
+    :destination_ip: IP address of the server
+    :destination_port: Port number of the server
     """
     try:
         import socket
@@ -122,6 +126,7 @@ def send_packet(destination_ip, destination_port):
 
 
 def usage():
+    """Print usage information"""
     argparser.print_help()
 
 

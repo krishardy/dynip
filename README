@@ -11,22 +11,31 @@ The client is typically configured to run on a schedule basis using crontab or W
 
 The server, when it receives the UDP datagram, opens a JSON file at the path specified in the ``CLIENT_LOG_PATH``.  The server looks to see if the client name (the data portion of the packet) is already in the list of known addresses.  If it is, it updates the record with the new IP address from the packet header and the current date and time.  If it is new, it adds it to the dict of known hosts.
 
+
 Installation
 ------------
 
-To configure the server, copy or edit example.conf and set the server_ip, server_port and client_log_path parameters.  Descriptions of each are in example.conf.
+Either download the package from PyPi, or use easy_install: ::
+
+    $ easy_install DynIP
+
+
+Usage
+-----
+
+To configure the server, copy or edit example.conf and set the ``server_ip``, ``server_port`` and ``client_log_path`` parameters in the ``DynIP:Server`` section.  Descriptions of each are in example.conf.
 
 Then start the server by typing: ::
 
     $ python dynip/server.py your_config_file.conf
 
-To launch the client and have it fire off a UDP packet, edit dynip/client.py and modify the SERVER_HOSTNAME and SERVER_PORT lines.  Descriptions of each are in the code.
+To launch the client and have it fire off a UDP packet, edit your configuration file (example.conf or whatever you copied it to), and modify the ``server_hostname`` and ``server_port`` lines in the ``DynIP:Client`` section.  Descriptions of each are in the code.
 
 Then launch the client by typing: ::
 
-    $ python dynip/client.py
+    $ python dynip/client.py your_config_file.conf
 
-The server will then save the hostname, ip address and date/time in the CLIENT_LOG_PATH file (dynip.json in the default configuration).
+The client will fire a single UDP packet to the server.  The server will then save the hostname, ip address and date/time in the file specified in ``client_log_path`` in the .conf file.
 
 
 Why I Built It
@@ -35,6 +44,7 @@ Why I Built It
 I am about to go on an extended trip away from home, yet need to know the dynamic IP address that is assigned to my home cable router so that I can easily help my family remotely in case they need help with their computers.  In order to do this, I need to know the IP address that my cable provider as assigned to my cable modem.
 
 By installing the client on each of my computers at home and triggering the client to run every 5 minutes, the server will always keep a log of the most recent public IP address of the boundary device.
+
 
 License
 =======

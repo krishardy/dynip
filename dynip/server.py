@@ -3,7 +3,8 @@ DynIP Server
 
 A embarrisingly-simple server which listens for UDP packets and logs
 the data, the source IP address and time.
-
+"""
+"""
 Copyright (c) 2011, R. Kristoffer Hardy
 All rights reserved.
 
@@ -65,11 +66,13 @@ argparser.add_argument('config', help='Configuration .conf file',
 def main(argv):
     """
     Listen for UDP packets and save the remote IP address and data
-    to the file specified in ``CLIENT_LOG_PATH``
+    to the file specified in ``client_log_path`` in the configuration file
 
     Notes: This reads the entire JSON file in on each packet, so
     this is not suitable for any significant load or anything but
     a trivial number of clients.
+
+    :argv: list of command-line parameters from sys.argv
     """
 
     # Parse the command line params
@@ -100,22 +103,22 @@ def main(argv):
         client_data = {}
     else:
         try:
-            log.info("Opening CLIENT_LOG_PATH: {0}".format(client_log_path))
+            log.info("Opening file at client_log_path: {0}".format(client_log_path))
             client_log_fh = open(client_log_path, "r")
         except:
             log.fatal("ERROR: Could not open {0}".format(client_log_path))
             return rc.CANNOT_OPEN_CLIENT_LOG_PATH
 
-        log.info("Opened CLIENT_LOG_PATH successfully".format(client_log_path))
+        log.info("Opened client_log_path successfully".format(client_log_path))
 
         try:
-            log.info("Importing json data from CLIENT_LOG_PATH")
+            log.info("Importing json data from client_log_path")
             client_data = json.load(client_log_fh)
             if isinstance(client_data, dict) == False:
                 client_data = {}
         except:
             log.debug(traceback.format_exc())
-            log.info("Improper format of CLIENT_LOG_PATH found.  Starting from scratch.")
+            log.info("Improper format of client_log_path file found.  Starting from scratch.")
             client_data = {}
 
         log.debug(client_data)
@@ -152,6 +155,10 @@ def listen_loop(sock, client_data, client_log_path):
     """
     A blocking loop that listens for UDP packets, logs them, and then waits for the next one.
     Exits when a KeyboardInterrupt is caught.
+
+    :sock: The bound socket.socketobject
+    :client_data: The in-memory client data dict that is written out to the ``client_log_path`` on receipt of each packet.
+    :client_log_path: The filepath to the JSON-encoded client log file
     """
     try:
         while True:
@@ -186,6 +193,7 @@ def listen_loop(sock, client_data, client_log_path):
 
 
 def usage():
+    """Print usage information"""
     argparser.print_help()
 
 
