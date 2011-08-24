@@ -1,0 +1,6 @@
+#!/bin/bash
+PYTHON=python
+
+DIR="$( cd -P "$( dirname "$0" )" && pwd )"
+
+$PYTHON $DIR/client.py $DIR/$1

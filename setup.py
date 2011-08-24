@@ -31,7 +31,9 @@ setup(
         "Programming Language :: Python"
     ],
     data_files=[
-        ('.', ['example.conf', 'test.conf'])
+        ('.', ['test.conf']),
+        ('bin', ['bin/*']),
+        ('template', ['template/*'])
     ],
     install_requires=[
         'setuptools',
