@@ -1,4 +1,3 @@
-* Provide config file from command line when starting client
 * service/init.d service management
 * RPM and DEB packaging (purely for my experience)
 * Android client
