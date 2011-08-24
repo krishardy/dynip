@@ -1,3 +1,4 @@
+* install script
 * service/init.d service management
 * RPM and DEB packaging (purely for my experience)
 * Android client

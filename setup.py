@@ -10,7 +10,7 @@ def read(fname):
 
 setup(
     name = "DynIP",
-    version = "0.1b",
+    version = "0.1d",
     author = "Kris Hardy",
     author_email = "kris@rkrishardy.com",
     description = ("A painfully simple UDP Client/Server for tracking the IP addresses of your devices."),
@@ -20,8 +20,17 @@ setup(
     packages=['dynip'],
     long_description=read('README'),
     classifiers=[
-        "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
+        "Topic :: Internet",
+        "Environment :: No Input/Output (Daemon)",
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: System Administrators",
         "License :: OSI Approved :: BSD License",
+        "Natural Language :: English",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python"
     ],
+    data_files=[
+        ('.', ['example.conf', 'test.conf'])
+    ]
 )
