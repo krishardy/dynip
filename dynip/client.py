@@ -17,68 +17,112 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 import socket
 import sys
 import logging
+import argparse
+import ConfigParser
+import traceback
+import return_codes as rc
 
-# SERVER_HOSTNAME:
+CONFIG_SECTION = "DynIP:Client"
+
+# DEFAULT_SERVER_HOSTNAME:
 #   Hostname or IP Address
 #   Example:
-#     SERVER_HOSTNAME="127.0.0.1"  # By IP Address
-#     SERVER_HOSTNAME="google.com"  # By domain name
-SERVER_HOSTNAME="localhost"
+#     DEFAULT_SERVER_HOSTNAME="127.0.0.1"  # By IP Address
+#     DEFAULT_SERVER_HOSTNAME="google.com"  # By domain name
+DEFAULT_SERVER_HOSTNAME="localhost"
 
-# SERVER_PORT:
+# DEFAULT_SERVER_PORT:
 #   The port that the server is listening on 
-SERVER_PORT=28630
+DEFAULT_SERVER_PORT=28630
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.WARNING)
 
-# Return Codes
-RETCODE_OK = 0
+
+# Prepare argparser
+argparser = argparse.ArgumentParser(description="Sends a single packet to the DynIP server.")
+argparser.add_argument('-v', '--verbose', help="Enable verbose (INFO-level) logging",
+        action='store_const',
+        default=logging.WARNING,
+        const=logging.INFO
+        )
+argparser.add_argument('--debug', help="Enable debug (DEBUG-level) logging",
+        action='store_const',
+        default=logging.WARNING,
+        const=logging.DEBUG
+        )
+argparser.add_argument('config', help="Configuration .conf file",
+        type=str, nargs=1)
+
 
 def main(argv):
     """
     Send a single UDP datagram to the server
     """
 
-    # Handle command-line params
-    if "-v" in argv:
-        log.setLevel(logging.INFO)
+    # Parse the command-line arguments
+    args = argparser.parse_args()
+    log.setLevel(min(args.verbose, args.debug))
 
-    if "--debug" in argv:
-        log.setLevel(logging.DEBUG)
+    try:
+        config = ConfigParser.ConfigParser(
+                {CONFIG_SECTION:
+                    {'server_hostname': DEFAULT_SERVER_HOSTNAME,
+                     'server_port': DEFAULT_SERVER_PORT
+                    }
+                })
+        config.read(args.config)
+        server_hostname = config.get(CONFIG_SECTION, 'server_hostname')
+        server_port = config.get(CONFIG_SECTION, 'server_port')
+    except:
+        log.fatal("ERROR: Could not read configuration file {0}".format(args.config))
+        return rc.CANNOT_READ_CONFIG
 
-    if "-h" in argv or "--help" in argv:
-        usage()
-        return RETCODE_OK
+    # Validate the params
+    if server_hostname == "":
+        log.fatal("ERROR: server_hostname is required")
+        return rc.SERVER_HOSTNAME_MISSING
+
 
     log.debug("Looking up hostname")
-    server_ip = socket.gethostbyname(SERVER_HOSTNAME)
+    server_ip = socket.gethostbyname(server_hostname)
 
-    log.debug("Preparing message")
-    message = socket.gethostname()
+    if send_packet(server_ip, server_port) == True:
+        return rc.OK
+    else:
+        return rc.PACKET_SEND_FAILED
 
-    log.debug("Preparing socket")
-    sock = socket.socket(
-            socket.AF_INET,
-            socket.SOCK_DGRAM
-            )
+def send_packet(destination_ip, destination_port):
+    """
+    Send a single UDP packet to the target server.
+    destination_ip: Integer
+    destination_port: Integer
+    """
+    try:
+        import socket
 
-    log.debug("Sending UDP datagram")
-    sock.sendto(message, (server_ip, SERVER_PORT))
+        log.debug("Preparing message")
+        message = socket.gethostname()
 
-    return RETCODE_OK
+        log.debug("Preparing socket")
+        sock = socket.socket(
+                socket.AF_INET,
+                socket.SOCK_DGRAM
+                )
+
+        log.debug("Sending UDP datagram to {0}:{1}".format(destination_ip, destination_port))
+        sock.sendto(message, (destination_ip, int(destination_port)))
+        return True
+    except:
+        log.warning("Packet should not be sent to the destination")
+        log.warning(traceback.format_exc())
+        return False
+
 
 
 def usage():
-    print """client.py ([options])
-Sends a single UDP packet to the DynIP server.
-
-Optional:
--h | --help                 Print this usage info
--v                          Enable verbose (INFO-level) logging
---debug                     Enable debug (DEBUG-level) logging
-"""
+    argparser.print_help()
 
 
 if __name__ == "__main__":

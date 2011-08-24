@@ -24,6 +24,7 @@ import traceback
 import os
 import argparse
 import ConfigParser
+import return_codes as rc
 
 
 logging.basicConfig()
@@ -46,11 +47,6 @@ DEFAULT_SERVER_PORT = 28630
 #   serve as the client log.
 DEFAULT_CLIENT_LOG_PATH = "dynip.json"
 
-# Return Codes (DO NOT EDIT)
-RETCODE_OK = 0
-RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH = 2
-RETCODE_CANNOT_READ_CONFIG = 3
-
 # Add'l configuration (shouldn't have to be edited)
 DATA_SIZE_MAX = 256
 
@@ -62,7 +58,7 @@ argparser.add_argument('-v', '--verbose', help="Enable verbose (INFO-level) logg
 argparser.add_argument('--debug', help="Enable debug (DEBUG-level) logging",
         action='store_const',
         default=logging.WARNING, const=logging.DEBUG)
-argparser.add_argument('config', help='Configuration ini file',
+argparser.add_argument('config', help='Configuration .conf file',
         type=str, nargs=1)
 
 
@@ -95,7 +91,7 @@ def main(argv):
         client_log_path = config.get(CONFIG_SECTION, 'client_log_path')
     except:
         log.fatal("ERROR: Could not read configuration file {0}".format(args.config))
-        return RETCODE_CANNOT_READ_CONFIG
+        return rc.CANNOT_READ_CONFIG
 
 
     log.info("Starting server...")
@@ -108,7 +104,7 @@ def main(argv):
             client_log_fh = open(client_log_path, "r")
         except:
             log.fatal("ERROR: Could not open {0}".format(client_log_path))
-            return RETCODE_CANNOT_OPEN_CLIENT_LOG_PATH
+            return rc.CANNOT_OPEN_CLIENT_LOG_PATH
 
         log.info("Opened CLIENT_LOG_PATH successfully".format(client_log_path))
 
@@ -149,7 +145,7 @@ def main(argv):
     sock.close()
     log.info("Server stopped")
 
-    return RETCODE_OK
+    return rc.OK
 
 
 def listen_loop(sock, client_data, client_log_path):
@@ -163,13 +159,17 @@ def listen_loop(sock, client_data, client_log_path):
 
             # Block while waiting for the next packet
             data, addr = sock.recvfrom(1024)
+            now = datetime.datetime.now().isoformat(' ')
 
-            log.debug("Received packet from {0} | Data: {1}".format(addr, data))
+            log.debug("{now} Received packet from {addr} | Data: {data}".format(
+                addr=addr,
+                data=data,
+                now=now))
 
             # Add the data to the client_data dict
             client_data[data[:DATA_SIZE_MAX]] = [
                     addr[0],
-                    datetime.datetime.now().isoformat(' ')
+                    now
                     ]
 
             # Write out the changes to a clean file

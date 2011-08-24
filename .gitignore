@@ -1,4 +1,5 @@
 *.log
+*.pyc
 /dynip.json
 /DynIP.egg-info
 /build
