@@ -32,5 +32,9 @@ setup(
     ],
     data_files=[
         ('.', ['example.conf', 'test.conf'])
+    ],
+    install_requires=[
+        'setuptools',
+        'argparse'
     ]
 )
