@@ -1,5 +1,14 @@
 #!/bin/bash
 DIR="$( cd -P "$( dirname "$0" )" && pwd )"
 
+if [ "$1" == "" ]; then
+    echo "dynip_init (path)"
+    exit
+fi
+
+if [ ! -a $1 ]; then
+    mkdir $1
+fi
+
 cp $DIR/../template/* $1
 
