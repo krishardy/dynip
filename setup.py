@@ -18,7 +18,7 @@ setup(
     keywords = "udp ip tracking",
     url = "http://www.rkrishardy.com",
     packages=['dynip'],
-    long_description=read('README'),
+    long_description=read('README.rst'),
     classifiers=[
         "Topic :: Utilities",
         "Topic :: Internet",
