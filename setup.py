@@ -16,7 +16,7 @@ setup(
     description = ("A painfully simple UDP Client/Server for tracking the IP addresses of your devices."),
     license = "BSD",
     keywords = "udp ip tracking",
-    url = "http://www.rkrishardy.com",
+    url = "http://readthedocs.org/docs/dynip/en/latest",
     packages=find_packages(exclude=["tests"]),
     include_package_data=True,
     zip_safe=False,
