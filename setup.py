@@ -19,6 +19,7 @@ setup(
     url = "http://www.rkrishardy.com",
     packages=['dynip'],
     long_description=read('README.rst'),
+
     classifiers=[
         "Topic :: Utilities",
         "Topic :: Internet",
@@ -30,13 +31,26 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python"
     ],
+
     data_files=[
         ('.', ['test.conf']),
-        ('bin', ['bin/*']),
-        ('template', ['template/*'])
+        #('bin', ['bin/dynip_init',
+        #         'bin/dynip_init.bat']),
+        ('share', ['template/client.py',
+                   'template/example.conf',
+                   'template/run_client',
+                   'template/server.py',
+                   'template/start_server'])
     ],
+
     install_requires=[
         'setuptools',
         'argparse'
-    ]
+    ],
+
+    entry_points = """
+        [console_scripts]
+        dynip-init = dynip.init.console:run
+        dynipd = dynip.server:main
+    """
 )

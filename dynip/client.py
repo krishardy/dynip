@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """
 DynIP Client
 
@@ -57,11 +56,9 @@ argparser.add_argument('config', help="Configuration .conf file",
         type=str, nargs=1)
 
 
-def main(argv):
+def main():
     """
     Send a single UDP datagram to the server
-
-    :argv: List of command line arguments from sys.argv
     """
 
     # Parse the command-line arguments
@@ -131,4 +128,4 @@ def usage():
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    sys.exit(main())

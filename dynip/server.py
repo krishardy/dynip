@@ -63,7 +63,7 @@ argparser.add_argument('config', help='Configuration .conf file',
         type=str, nargs=1)
 
 
-def main(argv):
+def main():
     """
     Listen for UDP packets and save the remote IP address and data
     to the file specified in ``client_log_path`` in the configuration file
@@ -71,8 +71,6 @@ def main(argv):
     Notes: This reads the entire JSON file in on each packet, so
     this is not suitable for any significant load or anything but
     a trivial number of clients.
-
-    :argv: list of command-line parameters from sys.argv
     """
 
     # Parse the command line params
@@ -189,6 +187,10 @@ def listen_loop(sock, client_data, client_log_path):
         # Break out of loop and exit gracefully
         log.info("Caught KeyboardInterrupt.  Exiting gracefully")
 
+        # Close client_log_fh if it is open
+        if client_log_fh.closed is False:
+            client_log_fh.close()
+
     return True
 
 
@@ -198,4 +200,4 @@ def usage():
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    sys.exit(main())
