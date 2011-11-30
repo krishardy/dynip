@@ -35,7 +35,7 @@ setup(
     ],
 
     package_data = {
-        'dynip.init': ['example.conf']
+        'dynip.init': ['example.conf'],
     },
 
     install_requires=[
