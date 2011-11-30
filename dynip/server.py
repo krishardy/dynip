@@ -154,9 +154,12 @@ def listen_loop(sock, client_data, client_log_path):
     A blocking loop that listens for UDP packets, logs them, and then waits for the next one.
     Exits when a KeyboardInterrupt is caught.
 
-    :sock: The bound socket.socketobject
-    :client_data: The in-memory client data dict that is written out to the ``client_log_path`` on receipt of each packet.
-    :client_log_path: The filepath to the JSON-encoded client log file
+    :param sock: The bound socket.socketobject
+    :type sock: socket.socketobject
+    :param client_data: The in-memory client data dict that is written out to the ``client_log_path`` on receipt of each packet.
+    :type client_data: dict
+    :param client_log_path: The filepath to the JSON-encoded client log file
+    :type client_log_path: str
     """
     try:
         while True:
@@ -188,7 +191,7 @@ def listen_loop(sock, client_data, client_log_path):
         log.info("Caught KeyboardInterrupt.  Exiting gracefully")
 
         # Close client_log_fh if it is open
-        if client_log_fh.closed is False:
+        if client_log_fh is not None and client_log_fh.closed is False:
             client_log_fh.close()
 
     return True

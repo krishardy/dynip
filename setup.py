@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level
@@ -17,7 +17,7 @@ setup(
     license = "BSD",
     keywords = "udp ip tracking",
     url = "http://www.rkrishardy.com",
-    packages=['dynip'],
+    packages=find_packages(exclude=["tests"]),
     include_package_data=True,
     zip_safe=False,
     long_description=read('README.rst'),
@@ -26,7 +26,7 @@ setup(
         "Topic :: Utilities",
         "Topic :: Internet",
         "Environment :: No Input/Output (Daemon)",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
@@ -35,7 +35,7 @@ setup(
     ],
 
     package_data = {
-        'dynip': ['template/*']
+        'dynip.init': ['example.conf']
     },
 
     install_requires=[
@@ -46,5 +46,6 @@ setup(
         [console_scripts]
         dynip-init = dynip.init.console:main
         dynipd = dynip.server:main
+        dynipc = dynip.client:main
     """
 )

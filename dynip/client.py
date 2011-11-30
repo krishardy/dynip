@@ -97,8 +97,10 @@ def send_packet(destination_ip, destination_port):
     """
     Send a single UDP packet to the target server.
 
-    :destination_ip: IP address of the server
-    :destination_port: Port number of the server
+    :param destination_ip: IP address of the server
+    :type desination_ip: str
+    :param destination_port: Port number of the server
+    :type destination_port: int
     """
     try:
         import socket
