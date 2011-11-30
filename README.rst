@@ -19,27 +19,62 @@ Either download the package from PyPi, or use easy_install: ::
 
     $ easy_install DynIP
 
-
 Usage
------
+=====
 
-To configure the server, copy or edit example.conf and set the ``server_ip``, ``server_port`` and ``client_log_path`` parameters in the ``DynIP:Server`` section.  Descriptions of each are in example.conf.
+Configuration
+-------------
 
-Then start the server by typing: ::
+First, build a configuration file to start from: ::
 
-    $ python dynip/server.py your_config_file.conf
+    $ dynip-init [path for configuration file]
 
-To launch the client and have it fire off a UDP packet, edit your configuration file (example.conf or whatever you copied it to), and modify the ``server_hostname`` and ``server_port`` lines in the ``DynIP:Client`` section.  Descriptions of each are in the code.
+DynIP will create a configuration file at the path you specify. 
+
+To configure the server, copy or edit the .conf file and set the ``server_ip``, ``server_port`` and ``client_log_path`` parameters in the ``DynIP:Server`` section.  Descriptions of each are in the .conf file.
+
+
+Launching the Server
+--------------------
+
+Start the server by typing: ::
+
+    $ dynipd [path to .conf file]
+
+The server will endlessly listen for packets until it is killed (by pressing CTRL-C if you launched it in the foreground, or killing it by the PID if you launched it in the background).
+
+
+Launching the Client
+--------------------
+
+To launch the client and have it fire off a UDP packet, edit your .conf file, and modify the ``server_hostname`` and ``server_port`` lines in the ``DynIP:Client`` section.  Descriptions of each are in the code.
 
 Then launch the client by typing: ::
 
-    $ python dynip/client.py your_config_file.conf
+    $ dynipc [path to .conf file]
 
 The client will fire a single UDP packet to the server.  The server will then save the hostname, ip address and date/time in the file specified in ``client_log_path`` in the .conf file.
 
+Options
+-------
+
+To enable verbose (INFO-level) logging, add `-v` to the command line when launching the server or client. ::
+
+    $ dynipd -v [path to .conf file]
+    $ dynipc -v [path to .conf file]
+
+
+To enable debug (DEBUG-level) logging, add `--debug` to the command line when launching the server or client. ::
+
+    $ dynipd --debug [path to .conf file]
+    $ dynipc --debug [path to .conf file]
+
+
+Both the server and client return usage information if you add `--help` or `-h` to the command line when invoking the client or server.
+
 
 Why I Built It
---------------
+==============
 
 I am about to go on an extended trip away from home, yet need to know the dynamic IP address that is assigned to my home cable router so that I can easily help my family remotely in case they need help with their computers.  In order to do this, I need to know the IP address that my cable provider as assigned to my cable modem.
 
