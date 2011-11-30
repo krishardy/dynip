@@ -18,6 +18,8 @@ setup(
     keywords = "udp ip tracking",
     url = "http://www.rkrishardy.com",
     packages=['dynip'],
+    include_package_data=True,
+    zip_safe=False,
     long_description=read('README.rst'),
 
     classifiers=[
@@ -32,25 +34,24 @@ setup(
         "Programming Language :: Python"
     ],
 
-    data_files=[
-        ('.', ['test.conf']),
-        #('bin', ['bin/dynip_init',
-        #         'bin/dynip_init.bat']),
-        ('share', ['template/client.py',
-                   'template/example.conf',
-                   'template/run_client',
-                   'template/server.py',
-                   'template/start_server'])
-    ],
+    #data_files=[
+    #    ('.', ['test.conf']),
+    #    #('bin', ['bin/dynip_init',
+    #    #         'bin/dynip_init.bat']),
+    #    ('share', ['template/client.py',
+    #               'template/example.conf',
+    #               'template/run_client',
+    #               'template/server.py',
+    #               'template/start_server'])
+    #],
 
     install_requires=[
-        'setuptools',
         'argparse'
     ],
 
     entry_points = """
         [console_scripts]
-        dynip-init = dynip.init.console:run
+        dynip-init = dynip.init.console:main
         dynipd = dynip.server:main
     """
 )
