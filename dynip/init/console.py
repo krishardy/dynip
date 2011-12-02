@@ -18,12 +18,12 @@ def main():
             help='The path to store the DynIP configuration files')
     args = parser.parse_args()
     
-    # Determine the path this this file
+    # Determine the path to this script
     this_dir, this_filename = os.path.split(__file__)
 
+    # Copy example.conf from this folder to the target path
     source_path = os.path.join(this_dir, 'example.conf')
     target_path = args.path[0]
-
     print("Copying from {0} to {1}".format(source_path, target_path))
     shutil.copy2(source_path, target_path)
 
