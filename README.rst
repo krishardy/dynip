@@ -15,9 +15,12 @@ The server, when it receives the UDP datagram, opens a JSON file at the path spe
 Installation
 ------------
 
-Either download the package from PyPi, or use easy_install: ::
+Either download the source tarball from PyPi and install with `python setup.py install`, or use easy_install or pip: ::
 
     $ easy_install DynIP
+    -or-
+    $ pip install DynIP
+
 
 Usage
 =====
